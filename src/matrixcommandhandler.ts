@@ -94,7 +94,7 @@ export class MatrixCommandHandler {
                             msgtype: "m.notice",
                         });
 
-                        await this.provisioner.AskBridgePermission(channel, event.sender);
+                        // await this.provisioner.AskBridgePermission(channel, event.sender);
                         await this.provisioner.BridgeMatrixRoom(channel, event.room_id);
                         return "I have bridged this room to your channel";
                     } catch (err) {
