@@ -19,6 +19,7 @@ import { DiscordStore } from "./store";
 import { Client as DiscordClient, TextChannel } from "discord.js";
 import { Log } from "./log";
 import { MetricPeg } from "./metrics";
+import { DiscordBot } from "./bot";
 
 const log = new Log("ClientFactory");
 
@@ -27,10 +28,12 @@ export class DiscordClientFactory {
     private store: DiscordStore;
     private botClient: DiscordClient;
     private clients: Map<string, DiscordClient>;
-    constructor(store: DiscordStore, config?: DiscordBridgeConfigAuth) {
+    private bot: DiscordBot;
+    constructor(store: DiscordStore, config?: DiscordBridgeConfigAuth, bot: DiscordBot) {
         this.config = config!;
         this.clients = new Map();
         this.store = store;
+        this.bot = bot;
     }
 
     public async init(): Promise<void> {
@@ -102,6 +105,7 @@ export class DiscordClientFactory {
             await client.login(token);
             log.verbose("Logged in. Storing ", userId);
             this.clients.set(userId, client);
+            await this.bot.setupClient(client);
             return client;
         } catch (err) {
             log.warn(`Could not log ${userId} in. Returning bot user for now.`, err);

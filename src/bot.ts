@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Client as DiscordClient } from 'discord.js';
 import { DiscordBridgeConfig } from "./config";
 import { DiscordClientFactory } from "./clientfactory";
 import { DiscordStore } from "./store";
@@ -193,8 +194,7 @@ export class DiscordBot {
         this.userSync = new UserSyncroniser(this.bridge, this.config, this, this.store.userStore);
     }
 
-    public async run(): Promise<void> {
-        const client = await this.clientFactory.getClient();
+    public async setupClient(client: DiscordClient) {
         if (!this.config.bridge.disableTypingNotifications) {
             client.on("typingStart", async (c, u) => {
                 try {
@@ -308,7 +308,6 @@ export class DiscordBot {
                 log.error("Exception thrown while handling \"message\" event", err);
             }
         });
-        const jsLog = new Log("discord.js");
 
         client.on("userUpdate", async (_, user) => {
             try {
@@ -330,6 +329,13 @@ export class DiscordBot {
                 await this.userSync.OnUpdateGuildMember(member);
             } catch (err) { log.error("Exception thrown while handling \"guildMemberUpdate\" event", err); }
         });
+    }
+
+    public async run(): Promise<void> {
+        const client = await this.clientFactory.getClient();
+        await this.setupClient(client);
+
+        const jsLog = new Log("discord.js");
         client.on("debug", (msg) => { jsLog.verbose(msg); });
         client.on("error", (msg) => { jsLog.error(msg); });
         client.on("warn", (msg) => { jsLog.warn(msg); });
