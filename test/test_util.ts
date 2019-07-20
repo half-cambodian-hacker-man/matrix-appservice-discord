@@ -122,7 +122,7 @@ Fox goes floof!`);
                     "!fox",
                     "!fox action hello world",
                     actions,
-                    parameters,
+                    parameters
                 );
                 expect(retStr).equal("param1: param1_hello\nparam2: param2_world");
             });

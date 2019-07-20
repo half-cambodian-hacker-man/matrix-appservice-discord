@@ -85,7 +85,7 @@ export class MatrixCommandHandler {
                         return "Invalid syntax. For more information try `!discord help bridge`";
                     }
                     try {
-                        const discordResult = await this.discord.LookupRoom(guildId, channelId);
+                        const discordResult = await this.discord.LookupRoom(guildId, channelId, event.sender);
                         const channel = discordResult.channel as Discord.TextChannel;
 
                         log.info(`Bridging matrix room ${event.room_id} to ${guildId}/${channelId}`);
@@ -129,6 +129,7 @@ export class MatrixCommandHandler {
                     const res = await this.discord.LookupRoom(
                         remoteRoom.data.discord_guild!,
                         remoteRoom.data.discord_channel!,
+                        event.sender
                     );
                     try {
                         await this.provisioner.UnbridgeChannel(res.channel, event.room_id);
