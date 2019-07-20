@@ -28,8 +28,8 @@ export class DiscordClientFactory {
     private store: DiscordStore;
     private botClient: DiscordClient;
     private clients: Map<string, DiscordClient>;
-    private bot: DiscordBot;
-    constructor(store: DiscordStore, config?: DiscordBridgeConfigAuth, bot: DiscordBot) {
+    private bot?: DiscordBot;
+    constructor(store: DiscordStore, config?: DiscordBridgeConfigAuth, bot?: DiscordBot) {
         this.config = config!;
         this.clients = new Map();
         this.store = store;
@@ -105,7 +105,11 @@ export class DiscordClientFactory {
             await client.login(token);
             log.verbose("Logged in. Storing ", userId);
             this.clients.set(userId, client);
-            await this.bot.setupClient(client);
+
+            if (this.bot) {
+                await this.bot.setupClient(client);
+            }
+
             return client;
         } catch (err) {
             log.warn(`Could not log ${userId} in. Returning bot user for now.`, err);

@@ -93,7 +93,7 @@ export class DiscordBot {
     ) {
 
         // create handlers
-        this.clientFactory = new DiscordClientFactory(store, config.auth);
+        this.clientFactory = new DiscordClientFactory(store, config.auth, this);
         this.discordMsgProcessor = new DiscordMessageProcessor(
             new DiscordMessageProcessorOpts(config.bridge.domain, this),
         );
